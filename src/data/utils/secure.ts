@@ -2,7 +2,7 @@ import Joi, { SchemaLike,} from "@hapi/joi";
 import { ServerError } from "./error";
 import { Request, Response, NextFunction, RequestHandler} from "express";
 
-export function validate(schema: SchemaLike): RequestHandler{
+export function secure(schema: SchemaLike): RequestHandler{
   return (req: Request, res: Response, next: NextFunction) => {
   if (!schema) return next();
 
