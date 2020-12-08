@@ -57,36 +57,6 @@ export class BaseRepository<T extends Model> {
   }
 
   /**
-   * Atomically update all the paths in `update` or create a new document
-   * if the query fails.
-   * @param query MongoDB query object or id string
-   * @param update new prop-value mapping
-   */
-  upsert(query: string | object, update: Partial<T>): Promise<T> {
-    const _query = this.getQuery(query);
-
-    return new Promise((resolve, reject) => {
-      this.model.findOneAndUpdate(
-        _query,
-        //@ts-ignore
-        { $set: update },
-        {
-          upsert: true,
-          new: true,
-          runValidators: true,
-          setDefaultsOnInsert: true
-        },
-        (err, result) => {
-          if (err && err.code === 11000) return reject(new DuplicateModelError(`${this.name} exists already`));
-
-          if (err) return reject(err);
-          resolve(result);
-        }
-      );
-    });
-  }
-
-  /**
    * Finds a document by its id
    * Returns non-deleted documents by default i.e documents without a `deleted_at` field
    * @param _id Document id
@@ -252,20 +222,6 @@ export class BaseRepository<T extends Model> {
     });
   }
 
-  /**
-   * Soft deletes a document by creating a `deleted_at` field in the document. The update is performed by calling a MongoDB `findOneAndUpdate`
-   * @param query MongoDB query object or id string
-   * @param throwOnNull Whether to throw a `ModelNotFoundError` error if the document is not found. Defaults to true
-   */
-  remove(query: string | object, throwOnNull = true): Promise<T> {
-    const update = {
-      $set: {
-        deleted_at: new Date()
-      }
-    };
-
-    return this.atomicUpdate(query, update, throwOnNull);
-  }
 
   /**
    * Permanently deletes a document by removing it from the collection(DB)
@@ -282,19 +238,6 @@ export class BaseRepository<T extends Model> {
         if (throwOnNull && !result) return reject(new ModelNotFoundError(`${this.name} not found`));
 
         resolve(result);
-      });
-    });
-  }
-
-  /**
-   * Permanently deletes multiple documents by removing them from the collection(DB)
-   * @param query MongoDB query object or id string
-   */
-  truncate(query: object): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.model.deleteMany(query, err => {
-        if (err) return reject(err);
-        resolve();
       });
     });
   }
