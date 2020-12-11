@@ -68,4 +68,14 @@ export class UserController extends BaseController<ControllerResponse> {
     this.handleSuccess(req, res, user);
   }
 
+  @httpGet("/:id", secure(isID))
+  async getUser(
+    @request() req: Request,
+    @response() res: Response,
+    @requestParam("id") id: string
+  ) {
+    const user = await UserRepo.byID(id);
+    this.handleSuccess(req, res, user);
+  }
+
 }
