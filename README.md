@@ -26,7 +26,7 @@ A set of rest endpoints for bunny users
 | GET `/users/:id`                                 | Gets a user by its id                                               |
 
 ## Link to Base URL
- * [link]()
+ * [link](https://bunny-user.herokuapp.com/)
 
 
 ## Built With
