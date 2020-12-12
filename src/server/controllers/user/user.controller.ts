@@ -39,7 +39,9 @@ export class UserController extends BaseController<ControllerResponse> {
 
   @httpGet("/")
   async getAllUsers(@request() req: Request, @response() res: Response) {
-    const user = await UserRepo.all({});
+    const user = await UserRepo.all({
+      sort: "+created_at"
+    });
     this.handleSuccess(req, res, user);
   }
 
